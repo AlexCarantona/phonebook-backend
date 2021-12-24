@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 //Middleware
 const morgan = require('morgan');
+morgan.token('data', (req, res) => JSON.stringify(req.body));
 
-app.use(morgan('tiny'));
+app.use(morgan(':method :url :status :res[content-length] :response-time ms :data'));
 app.use(express.json());
 
 var persons = [
@@ -42,13 +43,14 @@ app.post('/api/persons', (req, res) => {
   if (!req.body.name || !req.body.number){
     res.statusMessage = 'Name and number fields must be submitted.';
     res.status(400).end();
-  };
-  if (persons.map(p => p.name).includes(req.body.name)){
+  }
+  else if (persons.map(p => p.name).includes(req.body.name)){
     res.statusMessage = 'Name cannot be a duplicate.';
     res.status(400).end()
-  };
+  }
+  else {
   const newNote = {...req.body, id: randomId};
-  res.json(newNote);
+  res.json(newNote);}
 })
 
 app.get('/api/persons/:id', (req, res) => {
