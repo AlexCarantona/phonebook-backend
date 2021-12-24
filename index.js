@@ -36,6 +36,14 @@ app.get('/api/persons', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
   let randomId = Math.floor(Math.random() * 99999);
+  if (!req.body.name || !req.body.number){
+    res.statusMessage = 'Name and number fields must be submitted.';
+    res.status(400).end();
+  };
+  if (persons.map(p => p.name).includes(req.body.name)){
+    res.statusMessage = 'Name cannot be a duplicate.';
+    res.status(400).end()
+  };
   const newNote = {...req.body, id: randomId};
   res.json(newNote);
 })
