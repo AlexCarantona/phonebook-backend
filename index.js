@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 
+app.use(express.json());
+
 var persons = [
     {
       id: 1,
@@ -31,6 +33,12 @@ app.get('/', (req, res) => {
 app.get('/api/persons', (req, res) => {
   res.json(persons);
 });
+
+app.post('/api/persons', (req, res) => {
+  let randomId = Math.floor(Math.random() * 99999);
+  const newNote = {...req.body, id: randomId};
+  res.json(newNote);
+})
 
 app.get('/api/persons/:id', (req, res) => {
   const person = persons.find(p => p.id == req.params.id);
