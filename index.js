@@ -74,8 +74,8 @@ app.get('/api/persons/:id', (req, res) => {
 });
 
 app.delete('/api/persons/:id', (req, res) => {
-  persons = persons.filter(p => p.id !== req.params.id);
-  res.status(204).end();
+  Person.findByIdAndRemove(req.params.id)
+  .then(r => res.status(204).end());
 });
 
 app.get('/info', (req, res) => {
