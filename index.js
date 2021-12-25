@@ -61,8 +61,10 @@ app.post('/api/persons', (req, res) => {
     res.status(400).end()
   }
   else {
-  const newNote = {...req.body, id: randomId};
-  res.json(newNote);}
+  const newNote = new Person(req.body);
+  newNote.save(newNote)
+  .then(response => res.json(newNote));
+  }
 })
 
 app.get('/api/persons/:id', (req, res) => {
@@ -83,5 +85,5 @@ app.get('/info', (req, res) => {
     <p>Request made at ${now}</p>`)
 })
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}...`))
