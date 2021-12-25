@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/main.2d87a58e.css","mappings":"AAAA,OACE,mCAAwC,CACxC,UACF,CAEA,SACE,mCAA0C,CAC1C,WACF","sources":["index.css"],"sourcesContent":[".error {\n  background-color: hsla(0, 50%, 50%, 0.6);\n  color: black;\n}\n\n.success {\n  background-color: hsla(120, 50%, 50%, 0.3);\n  color: green;\n}\n"],"names":[],"sourceRoot":""}
