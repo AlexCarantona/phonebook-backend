@@ -4,10 +4,15 @@ const uniqueValidator = require('mongoose-unique-validator');
 const personSchema = mongoose.Schema({
   name: {
     type: String,
+    minLength: 3,
     required: true,
     unique: true
   },
-  number: String
+  number: {
+    type: String,
+    minLength: 8,
+    required: true
+  }
 });
 
 personSchema.set('toJSON', {
