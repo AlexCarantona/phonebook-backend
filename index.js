@@ -22,55 +22,24 @@ mongoose.connect(process.env.MONGODB_URI)
     console.log('error connecting to MongoDB:', error.message)
   });
 
-var persons = [
-    {
-      id: 1,
-      name: "Arto Hellas",
-      number: "040-123456"
-    },
-    {
-      id: 2,
-      name: "Ada Lovelace",
-      number: "39-44-5323523"
-    },
-    {
-      id: 3,
-      name: "Dan Abramov",
-      number: "12-43-234345"
-    },
-    {
-      id: 4,
-      name: "Mary Poppendieck",
-      number: "39-23-6423122"
-    }
-];
-
 app.get('/api/persons', (req, res) => {
   Person.find({})
   .then(persons => res.json(persons));
 });
 
 app.post('/api/persons', (req, res) => {
-  let randomId = Math.floor(Math.random() * 99999);
-  if (!req.body.name || !req.body.number){
-    res.statusMessage = 'Name and number fields must be submitted.';
-    res.status(400).end();
-  }
-  else if (persons.map(p => p.name).includes(req.body.name)){
-    res.statusMessage = 'Name cannot be a duplicate.';
-    res.status(400).end()
-  }
-  else {
   const newNote = new Person(req.body);
   newNote.save(newNote)
   .then(response => res.json(newNote));
-  }
-})
+});
 
-app.get('/api/persons/:id', (req, res) => {
-  const person = persons.find(p => p.id == req.params.id);
-  if (person) res.json(person);
-  else res.status(404).end()
+app.get('/api/persons/:id', (req, res, next) => {
+  Person.findById(req.params.id)
+  .then(person => {
+    if (person) res.json(person);
+    else res.status(404).end()
+  })
+  .catch(error => next(error))
 });
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -78,12 +47,24 @@ app.delete('/api/persons/:id', (req, res) => {
   .then(r => res.status(204).end());
 });
 
-app.get('/info', (req, res) => {
-  const entries = persons.length;
-  const now = Date().toString();
-  res.send(`<p>We have ${entries} people registered.</p>
-    <p>Request made at ${now}</p>`)
-})
+app.put('/api/persons/:id', (req, res, next) => {
+  Person.findByIdAndUpdate(req.params.id,
+    {number: req.body.number},
+    {new: true})
+  .then(r => res.json(r))
+  .catch(error => next(error))
+});
+
+
+// Error handling.
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id'})
+  }
+}
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}...`))
